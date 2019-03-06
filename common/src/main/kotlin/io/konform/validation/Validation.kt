@@ -11,9 +11,9 @@ interface Validation<T> {
         }
     }
 
-    fun validate(value: T): ValidationResult<T>
-    operator fun invoke(value: T) = validate(value)
+fun validate(value: T): ValidationResult<T>
+operator fun invoke(value: T) = validate(value)
 }
 
 
-class Constraint<R> internal constructor(val hint: String, val templateValues: List<String>, val test: (R) -> Boolean)
+class Constraint<R> internal constructor(val hint: ValidationErrorFactory, val templateValues: String, val test: (R) -> Boolean)

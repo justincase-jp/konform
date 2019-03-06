@@ -1,10 +1,6 @@
 package io.konform.validation.internal
 
-import io.konform.validation.Constraint
-import io.konform.validation.Invalid
-import io.konform.validation.Valid
-import io.konform.validation.Validation
-import io.konform.validation.ValidationResult
+import io.konform.validation.*
 import kotlin.reflect.KProperty1
 
 internal class NonNullPropertyValidation<T, R>(
@@ -33,7 +29,7 @@ internal class RequiredPropertyValidation<T, R>(
 ) : Validation<T> {
     override fun validate(value: T): ValidationResult<T> {
         val propertyValue = property(value)
-            ?: return Invalid<T>(mapOf(listOf(property.name) to listOf("is required")))
+            ?: return Invalid<T>(mapOf(listOf(property.name) to listOf(RequiredPropertyNotFound(property.name))))
         return validation(propertyValue).mapError { listOf(property.name) + it }.map { value }
     }
 }
@@ -97,10 +93,13 @@ internal class ValidationNode<T>(
             }
     }
 
-    private fun constructHint(value: T, it: Constraint<T>): String {
+    private fun constructHint(value: T, it: Constraint<T>): ValidationError {
+        return it.hint(it.templateValues)
+        /*
         val replaceValue = it.hint.replace("{value}", value.toString())
-        return it.templateValues
+        it.templateValues
             .foldIndexed(replaceValue) { index, hint, templateValue -> hint.replace("{$index}", templateValue) }
+         */
     }
 
     private fun applySubValidations(propertyValue: T, keyTransform: (List<String>) -> List<String>): ValidationResult<T> {

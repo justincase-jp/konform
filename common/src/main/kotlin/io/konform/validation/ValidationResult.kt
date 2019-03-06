@@ -3,14 +3,14 @@ package io.konform.validation
 import kotlin.reflect.KProperty1
 
 sealed class ValidationResult<T> {
-    abstract operator fun get(vararg propertyPath: Any): List<String>?
+    abstract operator fun get(vararg propertyPath: Any): List<ValidationError>?
     abstract fun <R> map(transform: (T) -> R): ValidationResult<R>
 }
 
 data class Invalid<T>(
-    internal val errors: Map<List<String>, List<String>>) : ValidationResult<T>() {
+    internal val errors: Map<List<String>, List<ValidationError>>) : ValidationResult<T>() {
 
-    override fun get(vararg propertyPath: Any): List<String>? =
+    override fun get(vararg propertyPath: Any): List<ValidationError>? =
         errors[propertyPath.map(::toPathSegment)]
     override fun <R> map(transform: (T) -> R): ValidationResult<R> = Invalid(this.errors)
 
@@ -23,6 +23,6 @@ data class Invalid<T>(
 }
 
 data class Valid<T>(val value: T) : ValidationResult<T>() {
-    override fun get(vararg propertyPath: Any): List<String>? = null
+    override fun get(vararg propertyPath: Any): List<ValidationError>? = null
     override fun <R> map(transform: (T) -> R): ValidationResult<R> = Valid(transform(this.value))
 }

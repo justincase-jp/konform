@@ -1,9 +1,6 @@
 package io.konform.validation.internal
 
-import io.konform.validation.Constraint
-import io.konform.validation.Valid
-import io.konform.validation.Validation
-import io.konform.validation.ValidationBuilder
+import io.konform.validation.*
 import io.konform.validation.internal.ValidationBuilderImpl.Companion.PropModifier.*
 import kotlin.collections.Map.Entry
 import kotlin.reflect.KProperty1
@@ -85,11 +82,11 @@ internal class ValidationBuilderImpl<T> : ValidationBuilder<T>() {
     private val subValidations = mutableMapOf<PropKey<T>, ValidationBuilderImpl<*>>()
     private val prebuiltValidations = mutableListOf<Validation<T>>()
 
-    override fun Constraint<T>.hint(hint: String): Constraint<T> =
+    override fun Constraint<T>.hint(hint: ValidationErrorFactory): Constraint<T> =
         Constraint(hint, this.templateValues, this.test).also { constraints.remove(this); constraints.add(it) }
 
-    override fun addConstraint(errorMessage: String, vararg templateValues: String, test: (T) -> Boolean): Constraint<T> {
-        return Constraint(errorMessage, templateValues.toList(), test).also { constraints.add(it) }
+    override fun addConstraint(errorMessage: ValidationErrorFactory, templateValues: String, test: (T) -> Boolean): Constraint<T> {
+        return Constraint(errorMessage, templateValues, test).also { constraints.add(it) }
     }
 
     private fun <R> KProperty1<T, R?>.getOrCreateBuilder(modifier: PropModifier): ValidationBuilder<R> {
