@@ -85,6 +85,9 @@ internal class ValidationBuilderImpl<T> : ValidationBuilder<T>() {
     override fun Constraint<T>.hint(hint: ValidationErrorFactory): Constraint<T> =
         Constraint(hint, this.templateValues, this.test).also { constraints.remove(this); constraints.add(it) }
 
+    override fun Constraint<T>.hint(hint: ValidationError): Constraint<T> =
+        Constraint({ hint }, this.templateValues, this.test).also { constraints.remove(this); constraints.add(it) }
+
     override fun addConstraint(errorMessage: ValidationErrorFactory, templateValues: String, test: (T) -> Boolean): Constraint<T> {
         return Constraint(errorMessage, templateValues, test).also { constraints.add(it) }
     }

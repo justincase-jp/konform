@@ -9,6 +9,7 @@ abstract class ValidationBuilder<T> {
     abstract fun build(): Validation<T>
     abstract fun addConstraint(errorMessage: ValidationErrorFactory, templateValues: String, test: (T) -> Boolean): Constraint<T>
     abstract infix fun Constraint<T>.hint(hint: ValidationErrorFactory): Constraint<T>
+    abstract infix fun Constraint<T>.hint(hint: ValidationError): Constraint<T>
     abstract operator fun <R> KProperty1<T, R>.invoke(init: ValidationBuilder<R>.() -> Unit)
     internal abstract fun <R> onEachIterable(prop: KProperty1<T, Iterable<R>>, init: ValidationBuilder<R>.() -> Unit)
     @JvmName("onEachIterable")
