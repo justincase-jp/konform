@@ -10,6 +10,10 @@ sealed class ValidationResult<T> {
 data class Invalid<T>(
     internal val errors: Map<List<String>, List<ValidationError>>) : ValidationResult<T>() {
 
+    fun allErrors(): List<ValidationError> {
+        return errors.values.flatten().distinctBy { it::class.simpleName }
+    }
+
     override fun get(vararg propertyPath: Any): List<ValidationError>? =
         errors[propertyPath.map(::toPathSegment)]
     override fun <R> map(transform: (T) -> R): ValidationResult<R> = Invalid(this.errors)
