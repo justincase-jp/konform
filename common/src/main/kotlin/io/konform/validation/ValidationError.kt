@@ -6,6 +6,12 @@ interface ValidationError {
     val message: String
 }
 
+class GeneralViolation(override val message: String): ValidationError
+
+class EqualityViolation(val value: String): ValidationError {
+    override val message = "must be $value"
+}
+
 class NotEnumMemberViolation(val value: String): ValidationError {
     override val message = "must be one of: $value"
 }

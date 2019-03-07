@@ -25,7 +25,7 @@ class ReadmeExampleTest {
             Event::organizer {
                 // even though the email is nullable you can force it to be set in the validation
                 Person::email required {
-                    pattern("\\w+@bigcorp.com") hint "Organizers must have a BigCorp email address"
+                    pattern(Regex("\\w+@bigcorp.com")) hint GeneralViolation("Organizers must have a BigCorp email address")
                 }
             }
 
@@ -40,17 +40,17 @@ class ReadmeExampleTest {
                     minLength(2)
                 }
                 Person::age {
-                    minimum(18) hint "Attendees must be 18 years or older"
+                    minimum(18) hint GeneralViolation("Attendees must be 18 years or older")
                 }
                 // Email is optional but if it is set it must be valid
                 Person::email ifPresent {
-                    pattern("\\w+@\\w+\\.\\w+") hint "Please provide a valid email address (optional)"
+                    pattern("\\w+@\\w+\\.\\w+") hint GeneralViolation("Please provide a valid email address (optional)")
                 }
             }
 
             // validation on the ticketPrices Map as a whole
             Event::ticketPrices {
-                minItems(1) hint "Provide at least one ticket price"
+                minItems(1) hint GeneralViolation("Provide at least one ticket price")
             }
 
             // validations for the individual entries
@@ -89,7 +89,7 @@ class ReadmeExampleTest {
         )
 
         assertEquals(3, countFieldsWithErrors(validateEvent(invalidEvent)))
-        assertEquals("Attendees must be 18 years or older", validateEvent(invalidEvent)[Event::attendees, 0, Person::age]!![0])
+        assertEquals("Attendees must be 18 years or older", validateEvent(invalidEvent)[Event::attendees, 0, Person::age]!![0].message)
     }
 
 }

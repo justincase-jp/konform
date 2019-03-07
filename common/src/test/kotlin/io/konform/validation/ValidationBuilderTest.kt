@@ -8,16 +8,16 @@ class ValidationBuilderTest {
 
     // Some example constraints for Testing
     fun ValidationBuilder<String>.minLength(minValue: Int) =
-        addConstraint("must have at least {0} characters", minValue.toString()) { it.length >= minValue }
+        addConstraint({ GeneralViolation("must have at least {0} characters") }, minValue.toString()) { it.length >= minValue }
 
     fun ValidationBuilder<String>.maxLength(minValue: Int) =
-        addConstraint("must have at most {0} characters", minValue.toString()) { it.length <= minValue }
+        addConstraint({ GeneralViolation("must have at most {0} characters") }, minValue.toString()) { it.length <= minValue }
 
     fun ValidationBuilder<String>.matches(regex: Regex) =
-        addConstraint("must have correct format") { it.contains(regex) }
+        addConstraint({ GeneralViolation("must have correct format") }, "") { it.contains(regex) }
 
     fun ValidationBuilder<String>.containsANumber() =
-        matches("[0-9]".toRegex()) hint "must have at least one number"
+        matches("[0-9]".toRegex()) hint GeneralViolation("must have at least one number")
 
     @Test
     fun singleValidation() {
@@ -235,7 +235,7 @@ class ValidationBuilderTest {
         val validation = Validation<Register> {
             Register::password.has.minLength(8)
         }
-        assertTrue(validation(Register(password = ""))[Register::password]!![0].contains("8"))
+        assertTrue(validation(Register(password = ""))[Register::password]!![0].message.contains("8"))
     }
 
     private data class Register(val password: String = "", val email: String = "", val referredBy: String? = null, val home: Address? = null)

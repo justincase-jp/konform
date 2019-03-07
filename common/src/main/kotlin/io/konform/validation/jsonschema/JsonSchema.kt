@@ -2,6 +2,12 @@ package io.konform.validation.jsonschema
 
 import io.konform.validation.*
 
+fun <T> ValidationBuilder<T>.const(allowed: T) =
+    addConstraint(
+        { EqualityViolation(it) },
+        allowed.toString()
+    ) { it == allowed }
+
 fun <T> ValidationBuilder<T>.enum(vararg allowed: T) =
     addConstraint(
         { NotEnumMemberViolation(it) },
@@ -52,6 +58,8 @@ fun ValidationBuilder<String>.maxLength(length: Int): Constraint<String> {
         length.toString()
     ) { it.length <= length }
 }
+
+fun ValidationBuilder<String>.pattern(pattern: String) = pattern(Regex(pattern))
 
 fun ValidationBuilder<String>.pattern(pattern: Regex) = addConstraint(
     { PatternViolation(it) },
