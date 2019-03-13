@@ -16,7 +16,7 @@ class NotEnumMemberViolation(val value: String): ValidationError {
     override val message = "must be one of: $value"
 }
 
-class RequiredPropertyNotFound (propertyName: String) : ValidationError {
+class RequiredPropertyNotFound (val propertyName: String) : ValidationError {
     override val message = "must have property $propertyName"
 }
 
