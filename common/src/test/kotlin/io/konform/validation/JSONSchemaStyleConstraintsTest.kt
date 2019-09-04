@@ -14,7 +14,6 @@ import io.konform.validation.jsonschema.minimum
 import io.konform.validation.jsonschema.pattern
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 class JSONSchemaStyleConstraintsTest {
     /*
@@ -80,8 +79,8 @@ class JSONSchemaStyleConstraintsTest {
         assertEquals(Valid("SYNACK"), stringifiedEnumValidation("SYNACK"))
         assertEquals(1, countFieldsWithErrors(stringifiedEnumValidation("ASDF")))
 
-        assertEquals("must be one of: 'SYN', 'ACK'", partialEnumValidation(SYNACK).get()!![0].message)
-        assertEquals("must be one of: 'SYN', 'ACK', 'SYNACK'", stringifiedEnumValidation("").get()!![0].message)
+        assertEquals("must be one of: 'SYN', 'ACK'", partialEnumValidation(SYNACK).get()!![0].apiMessage)
+        assertEquals("must be one of: 'SYN', 'ACK', 'SYNACK'", stringifiedEnumValidation("").get()!![0].apiMessage)
     }
 
     @Test
@@ -101,9 +100,9 @@ class JSONSchemaStyleConstraintsTest {
         assertEquals(1, countFieldsWithErrors(nullableConstValidation(null)))
         assertEquals(1, countFieldsWithErrors(nullableConstValidation("Konverse")))
 
-        assertEquals("must be 'Konform'", validation("Konverse").get()!![0].message)
-        assertEquals("must be null", nullableConstNullValidation("Konform").get()!![0].message)
-        assertEquals("must be 'Konform'", nullableConstValidation(null).get()!![0].message)
+        assertEquals("must be 'Konform'", validation("Konverse").get()!![0].apiMessage)
+        assertEquals("must be null", nullableConstNullValidation("Konform").get()!![0].apiMessage)
+        assertEquals("must be 'Konform'", nullableConstValidation(null).get()!![0].apiMessage)
     }
 
     @Test
@@ -122,7 +121,7 @@ class JSONSchemaStyleConstraintsTest {
 
         assertEquals<ValidationResult<Number>>(Valid(Double.POSITIVE_INFINITY), Validation<Number> { maximum(Double.POSITIVE_INFINITY) }(Double.POSITIVE_INFINITY))
 
-        assertEquals("must be at most '10'", validation(11).get()!![0].message)
+        assertEquals("must be at most '10'", validation(11).get()!![0].apiMessage)
     }
 
     @Test
@@ -142,7 +141,7 @@ class JSONSchemaStyleConstraintsTest {
         assertEquals(1, countFieldsWithErrors(Validation<Number> { exclusiveMaximum(Double.POSITIVE_INFINITY) }(Double.POSITIVE_INFINITY)))
 
 
-        assertEquals("must be less than '10'", validation(11).get()!![0].message)
+        assertEquals("must be less than '10'", validation(11).get()!![0].apiMessage)
     }
 
     @Test
@@ -161,7 +160,7 @@ class JSONSchemaStyleConstraintsTest {
 
         assertEquals<ValidationResult<Number>>(Valid(Double.NEGATIVE_INFINITY), Validation<Number> { minimum(Double.NEGATIVE_INFINITY) }(Double.NEGATIVE_INFINITY))
 
-        assertEquals("must be at least '10'", validation(9).get()!![0].message)
+        assertEquals("must be at least '10'", validation(9).get()!![0].apiMessage)
     }
 
     @Test
@@ -181,7 +180,7 @@ class JSONSchemaStyleConstraintsTest {
         assertEquals(1, countFieldsWithErrors(Validation<Number> { exclusiveMinimum(Double.NEGATIVE_INFINITY) }(Double.NEGATIVE_INFINITY)))
 
 
-        assertEquals("must be greater than '10'", validation(9).get()!![0].message)
+        assertEquals("must be greater than '10'", validation(9).get()!![0].apiMessage)
     }
 
     @Test
@@ -194,7 +193,7 @@ class JSONSchemaStyleConstraintsTest {
         assertEquals(1, countFieldsWithErrors(validation("Hello")))
         assertEquals(1, countFieldsWithErrors(validation("")))
 
-        assertEquals("must have at least 10 characters", validation("").get()!![0].message)
+        assertEquals("must have at least 10 characters", validation("").get()!![0].apiMessage)
     }
 
     @Test
@@ -207,7 +206,7 @@ class JSONSchemaStyleConstraintsTest {
 
         assertEquals(1, countFieldsWithErrors(validation("Hello World")))
 
-        assertEquals("must have at most 10 characters", validation("Hello World").get()!![0].message)
+        assertEquals("must have at most 10 characters", validation("Hello World").get()!![0].apiMessage)
     }
 
     @Test
@@ -219,7 +218,7 @@ class JSONSchemaStyleConstraintsTest {
         assertEquals(Valid(" a@a "), validation(" a@a "))
 
         assertEquals(1, countFieldsWithErrors(validation("a")))
-        assertEquals("must match the expected pattern", validation("").get()!![0].message)
+        assertEquals("must match the expected pattern", validation("").get()!![0].apiMessage)
 
         val compiledRegexValidation = Validation<String> {
             pattern("^\\w+@\\w+\\.\\w+$".toRegex())
@@ -230,7 +229,7 @@ class JSONSchemaStyleConstraintsTest {
         assertEquals(1, countFieldsWithErrors(compiledRegexValidation(" tester@example.com")))
         assertEquals(1, countFieldsWithErrors(compiledRegexValidation("tester@example.com ")))
 
-        assertEquals("must match the expected pattern", compiledRegexValidation("").get()!![0].message)
+        assertEquals("must match the expected pattern", compiledRegexValidation("").get()!![0].apiMessage)
     }
 
     @Test
@@ -257,7 +256,7 @@ class JSONSchemaStyleConstraintsTest {
 
         assertEquals(1, countFieldsWithErrors(mapValidation(emptyMap())))
 
-        assertEquals("must have at least 1 items", validation(emptyList()).get()!![0].message)
+        assertEquals("must have at least 1 items", validation(emptyList()).get()!![0].apiMessage)
     }
 
     @Test
@@ -283,6 +282,6 @@ class JSONSchemaStyleConstraintsTest {
 
         assertEquals(1, countFieldsWithErrors(mapValidation(mapOf("a" to 0, "b" to 1))))
 
-        assertEquals("must have at most 1 items", mapValidation(mapOf("a" to 0, "b" to 1)).get()!![0].message)
+        assertEquals("must have at most 1 items", mapValidation(mapOf("a" to 0, "b" to 1)).get()!![0].apiMessage)
     }
 }

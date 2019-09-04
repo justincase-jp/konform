@@ -235,7 +235,7 @@ class ValidationBuilderTest {
         val validation = Validation<Register> {
             Register::password.has.minLength(8)
         }
-        assertTrue(validation(Register(password = ""))[Register::password]!![0].message.contains("8"))
+        assertTrue(validation(Register(password = ""))[Register::password]!![0].apiMessage.contains("8"))
     }
 
     private data class Register(val password: String = "", val email: String = "", val referredBy: String? = null, val home: Address? = null)
